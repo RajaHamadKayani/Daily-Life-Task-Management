@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "147892872958",
+    "project_id": "daily-life-task-management",
+    "storage_bucket": "daily-life-task-management.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147892872958:android:db6d4d5fc24536e91d27af",
+        "android_client_info": {
+          "package_name": "com.example.daily_life_tasks_management"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMY8dAR6BBLvLod7CeP9G2Qi1_Ubb4aFE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
