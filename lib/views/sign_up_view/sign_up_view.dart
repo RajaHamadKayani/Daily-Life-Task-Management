@@ -22,10 +22,9 @@ class _SignUpViewState extends State<SignUpView> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          centerTitle: true,
           backgroundColor: Colors.teal,
           title: TextWidget(
-            text: "Daily Life Task Management",
+            text: "Daily Life Task Monitoring",
             textStyle: AppStyles.headlineBoldWhite,
           ),
         ),
@@ -45,6 +44,7 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               TextFieldWidget(
                 controller: signUpController.emailController,
+                controllerStyle: AppStyles.headlineMediumBlack,
                 hintText: "Enter email",
                 height: 50,
                 width: double.infinity,
@@ -57,6 +57,7 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               TextFieldWidget(
                 controller: signUpController.passwordController,
+                controllerStyle: AppStyles.headlineMediumBlack,
                 hintText: "Enter password",
                 height: 50,
                 width: double.infinity,
@@ -69,6 +70,7 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               TextFieldWidget(
                 controller: signUpController.confirmPasswordController,
+                controllerStyle: AppStyles.headlineMediumBlack,
                 hintText: "Confirm Password",
                 height: 50,
                 width: double.infinity,
@@ -81,6 +83,7 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               TextFieldWidget(
                 controller: signUpController.nameController,
+                controllerStyle: AppStyles.headlineMediumBlack,
                 hintText: "Enter your name",
                 height: 50,
                 width: double.infinity,
@@ -93,6 +96,7 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               TextFieldWidget(
                 controller: signUpController.phoneController,
+                controllerStyle: AppStyles.headlineMediumBlack,
                 hintText: "Enter your phone",
                 height: 50,
                 width: double.infinity,

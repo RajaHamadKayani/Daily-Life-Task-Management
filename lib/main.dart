@@ -1,15 +1,24 @@
+import 'package:daily_life_tasks_management/views/home_view/home_view.dart';
+import 'package:daily_life_tasks_management/views/login_view/login_view.dart';
 import 'package:daily_life_tasks_management/views/sign_up_view/sign_up_view.dart';
 import 'package:daily_life_tasks_management/views/splash_view/splash_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-await Firebase.initializeApp();
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-// Ideal time to initialize
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(firebaseMessageBackgroundHandler);
+
+  runApp(MyApp());
+}
+
+Future<void> firebaseMessageBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print(message.notification!.title.toString());
 }
 
 class MyApp extends StatelessWidget {
@@ -40,7 +49,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SignUpView(),
+      home: const LoginView(),
     );
   }
 }

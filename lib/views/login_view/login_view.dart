@@ -24,7 +24,7 @@ class _LoginViewState extends State<LoginView> {
           appBar: AppBar(
             backgroundColor: Colors.teal,
             title: TextWidget(
-              text: "Daily Life Task Management",
+              text: "Daily Life Task Monitoring",
               textStyle: AppStyles.headlineBoldWhite,
             ),
           ),
@@ -46,6 +46,8 @@ class _LoginViewState extends State<LoginView> {
                   controller: loginViewController.emailController,
                   hintText: "Enter email",
                   height: 50,
+                  hintStyle: AppStyles.headlineMediumBlack,
+                  controllerStyle: AppStyles.headlineMediumBlack,
                   width: double.infinity,
                   borderRadius: 25,
                   borderWidth: 2,
@@ -55,8 +57,10 @@ class _LoginViewState extends State<LoginView> {
                   height: 20,
                 ),
                 TextFieldWidget(
+                  hintStyle: AppStyles.headlineMediumBlack,
                   controller: loginViewController.passwordController,
                   hintText: "Enter password",
+                  controllerStyle: AppStyles.headlineMediumBlack,
                   height: 50,
                   width: double.infinity,
                   borderRadius: 25,
