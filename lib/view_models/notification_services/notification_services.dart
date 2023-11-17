@@ -1,12 +1,13 @@
 import 'dart:math';
 
 import 'package:app_settings/app_settings.dart';
-import 'package:daily_life_tasks_management/views/sign_up_view/sign_up_view.dart';
+import 'package:daily_life_tasks_management/views/home_view/home_view.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class NotificationServies {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -45,7 +46,7 @@ class NotificationServies {
     return token!;
   }
 
-  void firebaseInit(BuildContext context) {
+  void firebaseInit(BuildContext context, String? habitName, DateTime? dateTime) {
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print('Received FCM message: ${message.data}');
 
@@ -68,7 +69,7 @@ class NotificationServies {
 
       initLocalNotificationPlugin(context, message);
 
-      showNotifications(message);
+      showNotifications(message,habitName ?? "",dateTime!);
     });
   }
 
@@ -86,7 +87,8 @@ class NotificationServies {
     });
   }
 
-  Future<void> showNotifications(RemoteMessage message) async {
+  Future<void> showNotifications(
+      RemoteMessage? message, String habitName, DateTime dateTime) async {
     AndroidNotificationChannel channel = AndroidNotificationChannel(
         Random.secure().nextInt(100000).toString(),
         "High Importance Notifications",
@@ -104,10 +106,11 @@ class NotificationServies {
     NotificationDetails notificationDetails = NotificationDetails(
         android: androidNotificationDetails, iOS: darwinNotificationDetails);
     Future.delayed(Duration.zero, () {
-      flutterLocalNotificationsPlugin.show(
+      flutterLocalNotificationsPlugin.periodicallyShow(
           0,
-          message.notification!.title.toString(),
-          message.notification!.body.toString(),
+          "Habit Alert!",
+          "Your habit \"$habitName\" deadline time has arrived. And deadline time is $dateTime",
+          RepeatInterval.everyMinute,
           notificationDetails);
     });
   }
@@ -161,8 +164,8 @@ class NotificationServies {
 
   void handleFirebaseMessage(
       BuildContext context, RemoteMessage message) async {
-    if (message.data["type"] == "message") {
-      Get.to(const SignUpView());
+    if (message.data["key"] == "message") {
+      Get.to(HomeView());
       print("Successfully navigated to home screen");
     } else {
       print("failed to navigate to home screen");
@@ -183,4 +186,3 @@ class NotificationServies {
     }
   }
 }
-

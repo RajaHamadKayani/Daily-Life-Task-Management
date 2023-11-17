@@ -57,7 +57,10 @@ class HomeViewController extends GetxController {
                       height: 10,
                     ),
                     TextFieldWidget(
-                      suffixIcon:const Icon(Icons.arrow_drop_down,color: Colors.black,),
+                      suffixIcon: const Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.black,
+                      ),
                       borderRadius: 25,
                       borderWidth: 2,
                       color: 0xff000000,
@@ -75,7 +78,7 @@ class HomeViewController extends GetxController {
 
                         if (selectedDate != null) {
                           // ignore: use_build_context_synchronously
-                          TimeOfDay? selectedTime = await  showTimePicker(
+                          TimeOfDay? selectedTime = await showTimePicker(
                             context: context,
                             initialTime: TimeOfDay.now(),
                           );
@@ -136,10 +139,11 @@ class HomeViewController extends GetxController {
                                     DateFormat('yyyy-MM-dd HH:mm:ss.SSS').parse(
                                         textEditingControllerDateTime
                                             .value.text);
-                                // notificationServies.scheduleNotification(
-                                //   textEditingControllerTitle.value.text,
-                                //   parsedDateTime,
-                                // );
+                                notificationServies.firebaseInit(
+                                  context,
+                                  textEditingControllerTitle.value.text,
+                                  parsedDateTime,
+                                );
 
                                 databaseHelper!
                                     .insertData(TaskModel(

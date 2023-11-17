@@ -2,6 +2,7 @@ import 'package:daily_life_tasks_management/db/database_helper/database_helper.d
 import 'package:daily_life_tasks_management/models/task_model/task_model.dart';
 import 'package:daily_life_tasks_management/utils/app_style/app_styles.dart';
 import 'package:daily_life_tasks_management/view_models/controllers/home_view_controller/home_view_controller.dart';
+import 'package:daily_life_tasks_management/view_models/notifcation_services_1/notification_services_1.dart';
 import 'package:daily_life_tasks_management/view_models/notification_services/notification_services.dart';
 import 'package:daily_life_tasks_management/views/widgets/text_widget/text_widget.dart';
 import 'package:flutter/material.dart';
@@ -18,21 +19,22 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  NotificationServices1 notificationServices1 = NotificationServices1();
+  // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //     FlutterLocalNotificationsPlugin();
   NotificationServies notificationServies = NotificationServies();
   DatabaseHelper databaseHelper = DatabaseHelper();
   HomeViewController homeController = Get.put(HomeViewController());
-  void initLocalNotificationPlugin(BuildContext context) async {
-    // this is for initializing the notifications for andoid and ios devices
-    var androidInitializationSettings =
-        const AndroidInitializationSettings("@mipmap/ic_launcher.png");
-    var iosInitializationSettings = const DarwinInitializationSettings();
-    var initializationSettings = InitializationSettings(
-        android: androidInitializationSettings, iOS: iosInitializationSettings);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: (payload) {});
-  }
+  // void initLocalNotificationPlugin(BuildContext context) async {
+  //   // this is for initializing the notifications for andoid and ios devices
+  //   var androidInitializationSettings =
+  //       const AndroidInitializationSettings("@mipmap/ic_launcher.png");
+  //   var iosInitializationSettings = const DarwinInitializationSettings();
+  //   var initializationSettings = InitializationSettings(
+  //       android: androidInitializationSettings, iOS: iosInitializationSettings);
+  //   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+  //       onDidReceiveNotificationResponse: (payload) {});
+  // }
 
   // Initialize the local notifications plugin
 
@@ -40,16 +42,16 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     homeController.loadData();
-    initLocalNotificationPlugin(context);
-    notificationServies.requestNotificationsPermissions();
-    notificationServies.firebaseInit(context);
-    notificationServies.setUpInteractMessage(context);
+    // initLocalNotificationPlugin(context);
+    // notificationServies.requestNotificationsPermissions();
+    // notificationServies.firebaseInit(context,null,null);
+    // notificationServies.setUpInteractMessage(context);
 
-    notificationServies.getDeviceToken().then((value) {
-      print("Device notification token is:");
-      print(value.toString());
-      notificationServies.refereshToken();
-    });
+    // notificationServies.getDeviceToken().then((value) {
+    //   print("Device notification token is:");
+    //   print(value.toString());
+    //   notificationServies.refereshToken();
+    // });
   }
 
   @override
@@ -129,32 +131,45 @@ class _HomeViewState extends State<HomeView> {
                                     });
                                   },
                                   key: ValueKey<int>(snaphot.data![index].id!),
-                                  child: Card(
-                                    child: ListTile(
-                                      title: Text(snaphot.data![index].title),
-                                      subtitle: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            constraints: BoxConstraints(
-                                                maxWidth: MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    0.6),
-                                            child: Text(
-                                              snaphot.data![index].description,
-                                              maxLines: 1,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      notificationServices1
+                                          .schedualeNotification(
+                                              snaphot.data![index].title,
+                                              snaphot.data![index].dateTime
+                                                  .toString()
+                                                  .toString());
+                                      print("Card is clicked");
+                                    },
+                                    child: Card(
+                                      child: ListTile(
+                                        title: Text(snaphot.data![index].title),
+                                        subtitle: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              constraints: BoxConstraints(
+                                                  maxWidth:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width /
+                                                          0.6),
+                                              child: Text(
+                                                snaphot
+                                                    .data![index].description,
+                                                maxLines: 1,
+                                              ),
                                             ),
-                                          ),
-                                          Text(snaphot.data![index].dateTime
-                                              .toString())
-                                        ],
+                                            Text(snaphot.data![index].dateTime
+                                                .toString())
+                                          ],
+                                        ),
+                                        leading: Text(
+                                            snaphot.data![index].id.toString()),
                                       ),
-                                      leading: Text(
-                                          snaphot.data![index].id.toString()),
                                     ),
                                   ),
                                 );
