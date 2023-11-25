@@ -1,30 +1,31 @@
-class TaskModel {
-  var title;
-  DateTime dateTime;
-  var description;
+class Task {
   int? id;
-  String dateTimeString; // Added this line
+  String title;
+  String description;
+  DateTime deadline;
 
-  TaskModel({
-    required this.description,
-    required this.dateTime,
+  Task({
+    required this.id,
     required this.title,
-    this.id,
-  }) : dateTimeString = dateTime.toIso8601String(); // Added this line
-
-  TaskModel.jsonMap(Map<String, dynamic> res)
-      : id = res["id"],
-        description = res["description"],
-        dateTime = DateTime.parse(res["dateTime"]), // Parse the stored string back to DateTime
-        title = res['title'],
-        dateTimeString = res["dateTime"]; // Added this line
+    required this.description,
+    required this.deadline,
+  });
 
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
-      "description": description,
-      "title": title,
-      "dateTime": dateTimeString, // Updated this line
+      'id': id,
+      'title': title,
+      'description': description,
+      'deadline': deadline.toIso8601String(),
     };
+  }
+
+  static Task fromMap(Map<String, dynamic> map) {
+    return Task(
+      id: map['id'],
+      title: map['title'],
+      description: map['description'],
+      deadline: DateTime.parse(map['deadline']),
+    );
   }
 }

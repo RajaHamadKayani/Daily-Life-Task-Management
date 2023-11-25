@@ -1,53 +1,33 @@
 import 'package:daily_life_tasks_management/models/task_model/task_model.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io' as io;
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-
+import 'package:path/path.dart';
 class DatabaseHelper {
-  Database? _db;
+  static const String tableName = 'tasks';
 
-  Future<Database?> get db async {
-    if (_db != null) {
-      return _db;
-    }
-    _db = await initDatabase();
-    return _db;
+  Future<Database> initializeDatabase() async {
+    final String path = join(await getDatabasesPath(), 'tasks.db');
+    return openDatabase(path, version: 1, onCreate: (Database db, int version) async {
+    await db.execute(
+    'CREATE TABLE $tableName(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, deadline TEXT)');
+
+    });
   }
 
-  initDatabase() async {
-    io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "notes.db");
-    var db = await openDatabase(path, version: 1, onCreate: _onCreate);
-    return db;
+  Future<int> insertTask(Task task) async {
+    Database db = await initializeDatabase();
+    return await db.insert(tableName, task.toMap());
   }
 
-  _onCreate(Database db, int version) async {
-    db.execute('''
-      CREATE TABLE notes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        description TEXT NOT NULL,
-        dateTime TEXT NOT NULL
-      )
-    ''');
-  }
-
-  Future<TaskModel> insertData(TaskModel taskModel) async {
-    var dbClient = await db;
-     taskModel.dateTimeString = taskModel.dateTime.toIso8601String();
-    await dbClient!.insert("notes", taskModel.toMap());
-    return taskModel;
-  }
-
-  Future<List<TaskModel>> getData() async {
-    var dbClient = await db;
-    final List<Map<String, Object?>> getData = await dbClient!.query("notes");
-    return getData.map((e) => TaskModel.jsonMap(e)).toList();
-  }
-
-  Future<int> deleteNote(int id) async {
-    var dbClient = await db;
-    return await dbClient!.delete("notes", where: "id=?", whereArgs: [id]);
+  Future<List<Task>> getTasks() async {
+    Database db = await initializeDatabase();
+    List<Map<String, dynamic>> maps = await db.query(tableName);
+    return List.generate(maps.length, (i) {
+      return Task(
+        id: maps[i]['id'],
+        title: maps[i]['title'],
+        description: maps[i]['description'],
+        deadline: DateTime.parse(maps[i]['deadline']),
+      );
+    });
   }
 }

@@ -1,405 +1,285 @@
-import 'package:daily_life_tasks_management/db/database_helper/database_helper.dart';
-import 'package:daily_life_tasks_management/models/task_model/task_model.dart';
-import 'package:daily_life_tasks_management/utils/app_style/app_styles.dart';
-import 'package:daily_life_tasks_management/view_models/controllers/cron_controller/cron_controller.dart';
-import 'package:daily_life_tasks_management/view_models/controllers/home_view_controller/home_view_controller.dart';
-import 'package:daily_life_tasks_management/view_models/notifcation_services_1/notification_services_1.dart';
-import 'package:daily_life_tasks_management/view_models/notification_services/notification_services.dart';
-import 'package:daily_life_tasks_management/views/widgets/text_field_widget/text_field_widget.dart';
-import 'package:daily_life_tasks_management/views/widgets/text_widget/text_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/browser.dart' as tz;
+// import 'dart:math';
 
-// ignore: must_be_immutable
-class HomeView extends StatefulWidget {
-  String? userName;
-  HomeView({super.key, this.userName});
+// import 'package:daily_life_tasks_management/db/database_helper/database_helper.dart';
+// import 'package:daily_life_tasks_management/main.dart';
+// import 'package:daily_life_tasks_management/models/task_model/task_model.dart';
+// import 'package:daily_life_tasks_management/views/widgets/container_widget/container_widget.dart';
+// import 'package:flutter/material.dart';
+// import 'package:intl/intl.dart';
+// import 'package:timezone/data/latest.dart' as tz;
+// import 'package:timezone/timezone.dart' as tz;
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:daily_life_tasks_management/main.dart';
 
-  @override
-  State<HomeView> createState() => _HomeViewState();
-}
+// class HomeView extends StatefulWidget {
+//   const HomeView({super.key});
 
-class _HomeViewState extends State<HomeView> {
-  TextEditingController textEditingControllerTitle = TextEditingController();
-  TextEditingController textEditingControllerDescription =
-      TextEditingController();
-  TextEditingController textEditingControllerDate = TextEditingController();
-  NotificationServies notificationServies = NotificationServies();
-  CronController controller = Get.put(CronController());
-  dialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("Add Note"),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFieldWidget(
-                        borderRadius: 25,
-                        borderWidth: 2,
-                        color: 0xff000000,
-                        height: 40,
-                        width: double.infinity,
-                        controller: textEditingControllerTitle,
-                        hintText: "Enter Task Title"),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldWidget(
-                        borderRadius: 25,
-                        borderWidth: 2,
-                        color: 0xff000000,
-                        height: 40,
-                        width: double.infinity,
-                        controller: textEditingControllerDescription,
-                        hintText: "Enter task description"),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFieldWidget(
-                      suffixIcon: const Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.black,
-                      ),
-                      borderRadius: 25,
-                      borderWidth: 2,
-                      color: 0xff000000,
-                      height: 40,
-                      width: double.infinity,
-                      controller: textEditingControllerDate,
-                      hintText: "select deadline",
-                      onTap: () async {
-                        DateTime? selectedDate = await showDatePicker(
-                          context: context,
-                          initialDate: currentDateTime,
-                          firstDate: DateTime.now(),
-                          lastDate: DateTime(2095),
-                        );
+//   @override
+//   State<HomeView> createState() => _HomeViewState();
+// }
 
-                        if (selectedDate == null) {
-                          return;
-                        }
-                        setState(() {
-                          currentDateTime = selectedDate;
-                          textEditingControllerDate.text =
-                              "${currentDateTime.year}/${currentDateTime.currentDateTime.month}/${currentDateTime.day}";
-                        });
-                      },
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              width: 70,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.teal,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  "Cancel",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              try {
-                                DateTime parsedDateTime =
-                                    DateFormat('yyyy-MM-dd HH:mm:ss.SSS').parse(
-                                        textEditingControllerDateTime
-                                            .value.text);
-                                notificationServies.firebaseInit(
-                                  context,
-                                  textEditingControllerTitle.value.text,
-                                  parsedDateTime,
-                                );
+// class _HomeViewState extends State<HomeView> {
+//   final DatabaseHelper dbHelper = DatabaseHelper();
 
-                                databaseHelper!
-                                    .insertData(TaskModel(
-                                  description: textEditingControllerDescription
-                                      .value.text,
-                                  dateTime: parsedDateTime,
-                                  title: textEditingControllerTitle.value.text,
-                                ))
-                                    .then((value) {
-                                  print("values added");
-                                  print("title is ${value.title}");
+//   @override
+//   void initState() {
+//     super.initState();
 
-                                  homeController.showTasks =
-                                      databaseHelper!.getData();
-                                }).onError((error, stackTrace) {
-                                  print(error.toString());
-                                });
-                                Navigator.pop(context);
-                              } catch (e) {
-                                print("Error parsing date: $e");
-                                // Provide user-friendly error message
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                  backgroundColor: Colors.red,
-                                  content: Text(
-                                    "Error: Invalid date format. Please enter a valid date.",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ));
-                                // Schedule the notification
-                              }
-                            },
-                            child: Container(
-                              width: 70,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.teal,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  "Add",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              )
-            ],
-          );
-        });
-  }
+//     checkNotficationDetails();
+//   }
 
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+//  Future<void> _showNotification(String title, String body, DateTime time) async {
+//   const AndroidNotificationDetails androidPlatformChannelSpecifics =
+//       AndroidNotificationDetails('your_channel_id', 'your_channel_name',
+//           importance: Importance.max, priority: Priority.max);
+//   const NotificationDetails platformChannelSpecifics = NotificationDetails(
+//     android: androidPlatformChannelSpecifics,
+//   );
 
-  dynamic title;
-  // ignore: unused_field
-  static dynamic dateTime;
-  dynamic currentDateTime = DateTime.now();
-  NotificationServices1 notificationServices1 = NotificationServices1();
-  // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  //     FlutterLocalNotificationsPlugin();
-  DatabaseHelper databaseHelper = DatabaseHelper();
-  HomeViewController homeController = Get.put(HomeViewController());
-  // void initLocalNotificationPlugin(BuildContext context) async {
-  //   // this is for initializing the notifications for andoid and ios devices
-  //   var androidInitializationSettings =
-  //       const AndroidInitializationSettings("@mipmap/ic_launcher.png");
-  //   var iosInitializationSettings = const DarwinInitializationSettings();
-  //   var initializationSettings = InitializationSettings(
-  //       android: androidInitializationSettings, iOS: iosInitializationSettings);
-  //   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-  //       onDidReceiveNotificationResponse: (payload) {});
-  // }
+//   await flutterLocalNotificationsPlugin.zonedSchedule(
+//     0,
+//     title,
+//     body,
+//     tz.TZDateTime.from(time, tz.local), // Use tz.TZDateTime.from(time, tz.local)
+//     platformChannelSpecifics,
+//     uiLocalNotificationDateInterpretation:
+//         UILocalNotificationDateInterpretation.wallClockTime,
+//     androidAllowWhileIdle: true,
+//     payload: "dmdkmdv",
+//   );
+// }
 
-  // Initialize the local notifications plugin
 
-  @override
-  void initState() {
-    super.initState();
-    var androidInitializationSettings =
-        const AndroidInitializationSettings("@mipmap/ic_launcher.png");
-    var iosInitializationSettings = const DarwinInitializationSettings();
-    var initializationSettings = InitializationSettings(
-        android: androidInitializationSettings, iOS: iosInitializationSettings);
-    flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-    );
+//   void checkNotficationDetails() async {
+//     NotificationAppLaunchDetails? notificationAppLaunchDetails =
+//         await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+//     if (notificationAppLaunchDetails != null) {
+//       if (notificationAppLaunchDetails.didNotificationLaunchApp) {
+//         NotificationResponse? notificationResponse =
+//             notificationAppLaunchDetails.notificationResponse;
+//         if (notificationResponse != null) {
+//           String? payload = notificationResponse.payload;
+//           print(payload);
+//         }
+//       }
+//     }
+//   }
 
-    homeController.loadData();
-  }
+//   final TextEditingController _titleController = TextEditingController();
+//   final TextEditingController _descriptionController = TextEditingController();
+//   final TextEditingController _dateController = TextEditingController();
+//   final TextEditingController _timeController = TextEditingController();
 
-  void showNotification() {
-    AndroidNotificationDetails androidNotificationDetails =
-        const AndroidNotificationDetails(
-            "Task Monitoring Notifcation", "Task Alert",
-            priority: Priority.high,
-            importance: Importance.high,
-            channelDescription: "Your channel description",
-            ticker: "ticker");
-    DarwinNotificationDetails darwinNotificationDetails =
-        const DarwinNotificationDetails(
-            presentAlert: true, presentBadge: true, presentSound: true);
-    NotificationDetails notificationDetails = NotificationDetails(
-        android: androidNotificationDetails, iOS: darwinNotificationDetails);
-    flutterLocalNotificationsPlugin.show(
-        001, title, dateTime, notificationDetails);
-    tz.initializeTimeZones();
-    // ignore: unused_local_variable
-    final tz.TZDateTime scheduale =
-        tz.TZDateTime.from(currentDateTime, tz.local);
-    flutterLocalNotificationsPlugin.zonedSchedule(
-        001, title, dateTime, scheduale, notificationDetails,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.wallClockTime,
-        androidAllowWhileIdle: true);
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(
-            title: TextWidget(
-              text: "Home Screen",
-              textStyle: AppStyles.headlineBoldWhite,
-            ),
-            backgroundColor: Colors.teal,
-          ),
-          backgroundColor: AppStyles.whiteColor,
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.teal,
-            onPressed: () {
-              dialog(context);
-            },
-            child: const Center(
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.only(top: 25, left: 16, right: 16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextWidget(
-                  text:
-                      "${widget.userName} create, update and delete your daily tasks",
-                  textStyle: AppStyles.headlineBold,
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                ElevatedButton(
-                    onPressed: showNotification, child: Text("Show")),
-                Expanded(
-                  child: FutureBuilder(
-                      future: homeController.showTasks,
-                      builder:
-                          (context, AsyncSnapshot<List<TaskModel>> snaphot) {
-                        if (snaphot.hasData) {
-                          return ListView.builder(
-                              shrinkWrap: true,
-                              reverse: true,
-                              itemCount: snaphot.data?.length,
-                              itemBuilder: (context, index) {
-                                title = snaphot.data![index].title;
-                                dateTime = snaphot.data![index].dateTime;
-                                return Dismissible(
-                                  background: const SizedBox(
-                                    child: Icon(
-                                      Icons.delete_forever,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  direction: DismissDirection.endToStart,
-                                  onDismissed: (DismissDirection direction) {
-                                    setState(() {
-                                      databaseHelper.deleteNote(snaphot
-                                          .data![index]
-                                          .id!); // it will access the delete method of the database helper to delete the particular note from the database
-                                      homeController.showTasks = databaseHelper
-                                          .getData(); // it will refresh the database and assign the list of the data in the database to showNotes list
-                                      snaphot.data!
-                                          .remove(snaphot.data![index]);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              backgroundColor: Colors.teal,
-                                              content: Text(
-                                                "Task ${snaphot.data![index].id!} has been deleted from the notes list",
-                                                style: const TextStyle(
-                                                    color: Colors.white),
-                                              ))); // it will remove the widget from the screen of the list item of which we deleted from the database
-                                    });
-                                  },
-                                  key: ValueKey<int>(snaphot.data![index].id!),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      notificationServices1
-                                          .schedualeNotification(
-                                              snaphot.data![index].title,
-                                              snaphot.data![index].dateTime
-                                                  .toString()
-                                                  .toString());
-                                      print("Card is clicked");
-                                    },
-                                    child: Card(
-                                      child: ListTile(
-                                        title: Text(snaphot.data![index].title),
-                                        subtitle: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              constraints: BoxConstraints(
-                                                  maxWidth:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width /
-                                                          0.6),
-                                              child: Text(
-                                                snaphot
-                                                    .data![index].description,
-                                                maxLines: 1,
-                                              ),
-                                            ),
-                                            Text(snaphot.data![index].dateTime
-                                                .toString())
-                                          ],
-                                        ),
-                                        leading: Text(
-                                            snaphot.data![index].id.toString()),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              });
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }),
-                )
-              ],
-            ),
-          )),
-    );
-  }
-}
+// // ...
+
+// Future<void> _addTask() async {
+//   try {
+//     // Format date and time strings
+//     String dateString = _dateController.text;
+//     String timeString = _timeController.text;
+
+//     // Parse date and time using DateFormat
+//     DateTime deadline = DateFormat("yyyy-MM-dd HH:mm").parse('$dateString $timeString');
+
+//     Task task = Task(
+//       id: null,
+//       title: _titleController.text,
+//       description: _descriptionController.text,
+//       deadline: deadline,
+//     );
+
+//     int result = await dbHelper.insertTask(task);
+//     if (result != 0) {
+//       String formattedDateTime = DateFormat("yyyy-MM-dd HH:mm").format(deadline);
+
+//       _showNotification(
+//         task.title,
+//         "${task.title} has $formattedDateTime deadline",
+//         DateTime.parse(formattedDateTime),
+//       );
+
+//       _clearTextFields();
+//       setState(() {});
+//     } else {
+//       print('Failed to insert task into the database.');
+//     }
+//   } catch (e) {
+//     print('Error parsing DateTime: $e');
+//     // Handle the error as needed (e.g., show a user-friendly message)
+//   }
+// }
+
+
+
+//   void _clearTextFields() {
+//     _titleController.clear();
+//     _descriptionController.clear();
+//     _dateController.clear();
+//     _timeController.clear();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Task List'),
+//       ),
+//       body: Column(
+//         children: [
+//           Expanded(
+//             child: FutureBuilder<List<Task>>(
+//               future: dbHelper.getTasks(),
+//               builder: (context, snapshot) {
+//                 if (!snapshot.hasData) {
+//                   return CircularProgressIndicator();
+//                 }
+
+//                 List<Task> tasks = snapshot.data!;
+//                 return ListView.builder(
+//                   scrollDirection: Axis.vertical,
+//                   itemCount: tasks.length,
+//                   itemBuilder: (context, index) {
+//                     return ListTile(
+//                       title: Text(tasks[index].title),
+//                       subtitle: Text('Deadline: ${tasks[index].deadline}'),
+//                       // Add other details if needed
+//                     );
+//                   },
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         onPressed: () => _showAddTaskDialog(),
+//         child: Icon(Icons.add),
+//       ),
+//     );
+//   }
+
+//   Future<void> _showAddTaskDialog() async {
+//   DateTime selectedDate = DateTime.now();
+//   TimeOfDay selectedTime = TimeOfDay.now();
+
+//   Future<void> _selectDate(BuildContext context) async {
+//     final DateTime? pickedDate = await showDatePicker(
+//       context: context,
+//       initialDate: selectedDate,
+//       firstDate: DateTime.now(),
+//       lastDate: DateTime(2101),
+//     );
+
+//     if (pickedDate != null && pickedDate != selectedDate) {
+//       setState(() {
+//         selectedDate = pickedDate;
+//         _dateController.text = selectedDate.toLocal().toString().split(' ')[0];
+//       });
+//     }
+//   }
+
+//   Future<void> _selectTime(BuildContext context) async {
+//     final TimeOfDay? pickedTime = await showTimePicker(
+//       context: context,
+//       initialTime: selectedTime,
+//     );
+
+//     if (pickedTime != null && pickedTime != selectedTime) {
+//       setState(() {
+//         selectedTime = pickedTime;
+//         _timeController.text = selectedTime.format(context);
+//       });
+//     }
+//   }
+
+//   return showDialog(
+//     context: context,
+//     builder: (context) {
+//       return AlertDialog(
+//         title: Text('Add Task'),
+//         content: SingleChildScrollView(
+//           child: Column(
+//             children: [
+//               TextField(
+//                 controller: _titleController,
+//                 decoration: InputDecoration(labelText: 'Title'),
+//               ),
+//               const SizedBox(
+//                 height: 10,
+//               ),
+//               TextField(
+//                 controller: _descriptionController,
+//                 decoration: InputDecoration(labelText: 'Description'),
+//               ),
+//               const SizedBox(
+//                 height: 10,
+//               ),
+//               Row(
+//                 children: [
+//                   Expanded(
+//                     child: InkWell(
+//                       onTap: () => _selectDate(context),
+//                       child: IgnorePointer(
+//                         child: TextField(
+//                           controller: _dateController,
+//                           decoration:
+//                               InputDecoration(labelText: 'Date (YYYY-MM-DD)'),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   IconButton(
+//                     icon: Icon(Icons.calendar_today),
+//                     onPressed: () => _selectDate(context),
+//                   ),
+//                 ],
+//               ),
+//               const SizedBox(
+//                 height: 10,
+//               ),
+//               Row(
+//                 children: [
+//                   Expanded(
+//                     child: InkWell(
+//                       onTap: () => _selectTime(context),
+//                       child: IgnorePointer(
+//                         child: TextField(
+//                           controller: _timeController,
+//                           decoration:
+//                               InputDecoration(labelText: 'Time (HH:MM)'),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   IconButton(
+//                     icon: Icon(Icons.access_time),
+//                     onPressed: () => _selectTime(context),
+//                   ),
+//                 ],
+//               ),
+//               const SizedBox(
+//                 height: 20,
+//               ),
+//             ],
+//           ),
+//         ),
+//         actions: [
+//           ElevatedButton(
+//             onPressed: () {
+//               _addTask();
+//               Navigator.pop(context);
+//             },
+//             child: Text('Add'),
+//           ),
+//           TextButton(
+//             onPressed: () => Navigator.pop(context),
+//             child: Text('Cancel'),
+//           ),
+//         ],
+//       );
+//     },
+//   );
+// }
+
+// }

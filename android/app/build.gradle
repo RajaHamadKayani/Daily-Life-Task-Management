@@ -46,7 +46,8 @@ android {
         applicationId "com.example.daily_life_task_management"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-         minSdkVersion 21      
+        minSdkVersion 21    
+        // missingDimensionStrategy "react-native-camera", "general"
         targetSdkVersion 28
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
@@ -63,6 +64,13 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+     compileOptions {
+    // Flag to enable support for the new language APIs
+    coreLibraryDesugaringEnabled true
+    // Sets Java compatibility to Java 8
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 }
 
 flutter {
@@ -72,7 +80,5 @@ dependencies {
   implementation platform('com.google.firebase:firebase-bom:30.2.0')
   implementation 'com.google.firebase:firebase-analytics'
   implementation 'com.android.support:multidex:1.0.3'
-
-
-
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 }

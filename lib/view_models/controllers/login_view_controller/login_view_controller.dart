@@ -1,4 +1,5 @@
 import 'package:daily_life_tasks_management/views/home_view/home_view.dart';
+import 'package:daily_life_tasks_management/views/home_view_1/home_view_1.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -41,8 +42,7 @@ class LoginViewController extends GetxController {
       print('User Email: $userEmail');
       print('User Name: $userName');
       print('User Phone: $userPhone');
-       Get.to(HomeView(
-        userName: userName,
+       Get.to(HomeView1(
       ));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -65,3 +65,4 @@ class LoginViewController extends GetxController {
     }
   }
 }
+

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:daily_life_tasks_management/views/home_view/home_view.dart';
+import 'package:daily_life_tasks_management/views/home_view_1/home_view_1.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -165,7 +166,7 @@ class NotificationServies {
   void handleFirebaseMessage(
       BuildContext context, RemoteMessage message) async {
     if (message.data["key"] == "message") {
-      Get.to(HomeView());
+      Get.to(HomeView1());
       print("Successfully navigated to home screen");
     } else {
       print("failed to navigate to home screen");

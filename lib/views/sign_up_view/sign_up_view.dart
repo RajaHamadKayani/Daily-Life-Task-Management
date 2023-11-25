@@ -1,7 +1,6 @@
 import 'package:daily_life_tasks_management/utils/app_style/app_styles.dart';
 import 'package:daily_life_tasks_management/view_models/controllers/sign_up_controller/sign_up_controller.dart';
-import 'package:daily_life_tasks_management/views/home_view/home_view.dart';
-import 'package:daily_life_tasks_management/views/login_view/login_view.dart';
+import 'package:daily_life_tasks_management/views/home_view_1/home_view_1.dart';
 import 'package:daily_life_tasks_management/views/widgets/container_widget/container_widget.dart';
 import 'package:daily_life_tasks_management/views/widgets/text_field_widget/text_field_widget.dart';
 import 'package:daily_life_tasks_management/views/widgets/text_widget/text_widget.dart';
@@ -133,7 +132,7 @@ class _SignUpViewState extends State<SignUpView> {
                     ),
                     GestureDetector(
                         onTap: () {
-                          Get.to( HomeView());
+                          Get.to( HomeView1());
                         },
                         child: TextWidget(
                           text: "Already have an account? Sign In",

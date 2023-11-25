@@ -1,18 +1,33 @@
-import 'package:daily_life_tasks_management/view_models/controllers/cron_controller/cron_controller.dart';
-import 'package:daily_life_tasks_management/view_models/notifcation_services_1/notification_services_1.dart';
-import 'package:daily_life_tasks_management/views/login_view/login_view.dart';
+import 'package:daily_life_tasks_management/view_models/app_themes/appthemes.dart';
+import 'package:daily_life_tasks_management/views/home_view_1/home_view_1.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:timezone/data/latest_10y.dart';
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 void main(context) async {
-  // CronController cronController = CronController();
-  // cronController.cronMethod( null,null);
-  // ignore: unused_local_variable
-  // NotificationServices1 notificationServices1 = NotificationServices1();
-
   WidgetsFlutterBinding.ensureInitialized();
+  Future<void> _initializeNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('icon_1');
+    DarwinInitializationSettings initializationSettingsIOS =
+        const DarwinInitializationSettings();
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsIOS);
+
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onDidReceiveNotificationResponse: (response) {
+      print(response.payload.toString());
+    });
+  }
+
+  initializeTimeZones();
   // NotificationServices1().initializeSettings();
   await Firebase.initializeApp();
   // FirebaseMessaging.onBackgroundMessage(firebaseMessageBackgroundHandler);
@@ -33,11 +48,10 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const LoginView(),
+      theme: AppThemes.lightTheme,
+      darkTheme: AppThemes.darkTheme,
+      themeMode: ThemeMode.light,
+      home: const HomeView1(),
     );
   }
 }
