@@ -11,28 +11,13 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 void main(context) async {
   WidgetsFlutterBinding.ensureInitialized();
-  Future<void> _initializeNotifications() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('icon_1');
-    DarwinInitializationSettings initializationSettingsIOS =
-        const DarwinInitializationSettings();
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-            android: initializationSettingsAndroid,
-            iOS: initializationSettingsIOS);
-
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: (response) {
-      print(response.payload.toString());
-    });
-  }
 
   initializeTimeZones();
   // NotificationServices1().initializeSettings();
   await Firebase.initializeApp();
   // FirebaseMessaging.onBackgroundMessage(firebaseMessageBackgroundHandler);
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 // Future<void> firebaseMessageBackgroundHandler(RemoteMessage message) async {

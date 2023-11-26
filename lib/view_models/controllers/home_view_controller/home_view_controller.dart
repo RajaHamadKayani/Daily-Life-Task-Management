@@ -1,6 +1,5 @@
 import 'package:daily_life_tasks_management/db/database_helper/database_helper.dart';
 import 'package:daily_life_tasks_management/models/task_model/task_model.dart';
-import 'package:daily_life_tasks_management/views/home_view/home_view.dart';
 import 'package:get/get.dart';
 
 // class HomeViewController extends GetxController {

@@ -1,4 +1,3 @@
-import 'package:daily_life_tasks_management/views/home_view/home_view.dart';
 import 'package:daily_life_tasks_management/views/home_view_1/home_view_1.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';

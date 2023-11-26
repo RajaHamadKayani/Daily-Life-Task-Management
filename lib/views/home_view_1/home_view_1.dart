@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:daily_life_tasks_management/db/database_helper/database_helper.dart';
 import 'package:daily_life_tasks_management/main.dart';
 import 'package:daily_life_tasks_management/models/task_model/task_model.dart';
+import 'package:daily_life_tasks_management/view_models/notification_services/notification_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +19,7 @@ class HomeView1 extends StatefulWidget {
 }
 
 class _HomeView1State extends State<HomeView1> {
+  NotificationServices notificationServices = NotificationServices();
   DateTime? deadline;
   tz.TZDateTime? scheduledDate; // Updated to TZDateTime
   final DatabaseHelper dbHelper = DatabaseHelper();
@@ -25,7 +27,7 @@ class _HomeView1State extends State<HomeView1> {
   @override
   void initState() {
     super.initState();
-
+    notificationServices.initializeNotifications();
     checkNotificationDetails();
   }
 
@@ -78,6 +80,12 @@ class _HomeView1State extends State<HomeView1> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
+  _clearTextFields() {
+    _titleController.clear();
+    _descriptionController.clear();
+    _dateController.clear();
+    _timeController.clear();
+  }
 
   tz.TZDateTime _nextInstanceOfTenAM() {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
@@ -103,56 +111,56 @@ class _HomeView1State extends State<HomeView1> {
     return scheduledDateTime;
   }
 
-  Future<void> _addTask() async {
-    try {
-      String dateString = _dateController.text;
-      String timeString = _timeController.text;
+ Future<void> _addTask() async {
+  try {
+    String dateString = _dateController.text;
+    String timeString = _timeController.text;
 
-      String dateTimeString = "$dateString $timeString";
-      DateTime parsedDateTime =
-          DateFormat("yyyy-MM-dd HH:mm").parse(dateTimeString);
+    String dateTimeString = "$dateString $timeString";
+    DateTime parsedDateTime =
+        DateFormat("yyyy-MM-dd HH:mm").parse(dateTimeString);
 
-      deadline = parsedDateTime;
+    // Convert parsedDateTime to TZDateTime
+    tz.TZDateTime scheduledDate =
+        tz.TZDateTime.from(parsedDateTime, tz.local);
 
-      Task task = Task(
-        id: null,
-        title: _titleController.text,
-        description: _descriptionController.text,
-        deadline: parsedDateTime,
+    // Check if the scheduled date is in the future
+    if (scheduledDate.isBefore(tz.TZDateTime.now(tz.local))) {
+      print('Scheduled date must be in the future.');
+      return;
+    }
+
+    Task task = Task(
+      id: null,
+      title: _titleController.text,
+      description: _descriptionController.text,
+      deadline: scheduledDate,
+    );
+
+    int result = await dbHelper.insertTask(task);
+    if (result != 0) {
+      // Schedule local notification using scheduledDate
+      int id = math.Random().nextInt(10000);
+      await scheduleLocalNotification(
+        id: id,
+        title: task.title,
+        body:
+            "${task.title} has ${DateFormat("yyyy-MM-dd HH:mm").format(scheduledDate)} deadline",
+        scheduledDate: scheduledDate,
+        payload: "",
       );
 
-      int result = await dbHelper.insertTask(task);
-      if (result != 0) {
-        scheduledDate = _nextInstance(parsedDateTime);
-
-        int id = math.Random().nextInt(10000);
-        scheduleLocalNotification(
-          id: id,
-          title: task.title,
-          body:
-              "${task.title} has ${DateFormat("yyyy-MM-dd HH:mm").format(deadline!)} deadline",
-          scheduledDate: tz.TZDateTime.from(scheduledDate!,
-              tz.local), // Use scheduledDate instead of deadline
-          payload: "",
-        );
-        print("schedule ${scheduledDate!.toLocal()}");
-
-        _clearTextFields();
-        setState(() {});
-      } else {
-        print('Failed to insert task into the database.');
-      }
-    } catch (e) {
-      print('Error parsing DateTime: $e');
+      print("Scheduled ${scheduledDate.toLocal()}");
+      setState(() {});
+      _clearTextFields(); // Move this line here to clear the text fields after successful scheduling
+    } else {
+      print('Failed to insert task into the database.');
     }
+  } catch (e) {
+    print('Error parsing DateTime: $e');
   }
+}
 
-  void _clearTextFields() {
-    _titleController.clear();
-    _descriptionController.clear();
-    _dateController.clear();
-    _timeController.clear();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -304,6 +312,7 @@ class _HomeView1State extends State<HomeView1> {
               onPressed: () {
                 _addTask();
                 Navigator.pop(context);
+                _clearTextFields();
               },
               child: Text('Add'),
             ),
