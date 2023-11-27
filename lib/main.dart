@@ -1,4 +1,6 @@
 import 'package:daily_life_tasks_management/view_models/app_themes/appthemes.dart';
+import 'package:daily_life_tasks_management/views/add_task/add_task.dart';
+import 'package:daily_life_tasks_management/views/home_view/home_view.dart';
 import 'package:daily_life_tasks_management/views/home_view_1/home_view_1.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
       theme: AppThemes.lightTheme,
       darkTheme: AppThemes.darkTheme,
       themeMode: ThemeMode.light,
-      home: const HomeView1(),
+      home: const AddTask(),
     );
   }
 }

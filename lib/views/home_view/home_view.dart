@@ -15,11 +15,27 @@ class _HomeViewState extends State<HomeView> {
     // TODO: implement initState
     super.initState();
     notificationServices.requestIOSPermissions();
+    notificationServices.initializeNotifications();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: GestureDetector(
+                onTap: () {
+                  notificationServices.displayNotification(
+                      title: "Hello notification",
+                      body: "Notification Recieved");
+                  // notificationServices.scheduledNotification();
+                },
+                child: Icon(Icons.notification_add)),
+          )
+        ],
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,

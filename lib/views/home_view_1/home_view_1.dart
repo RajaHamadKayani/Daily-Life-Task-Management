@@ -19,6 +19,7 @@ class HomeView1 extends StatefulWidget {
 }
 
 class _HomeView1State extends State<HomeView1> {
+  DateTime? parsedDateTime;
   NotificationServices notificationServices = NotificationServices();
   DateTime? deadline;
   tz.TZDateTime? scheduledDate; // Updated to TZDateTime
@@ -27,8 +28,8 @@ class _HomeView1State extends State<HomeView1> {
   @override
   void initState() {
     super.initState();
+    notificationServices.requestIOSPermissions();
     notificationServices.initializeNotifications();
-    checkNotificationDetails();
   }
 
   static Future<void> scheduleLocalNotification({
@@ -96,71 +97,62 @@ class _HomeView1State extends State<HomeView1> {
     return scheduledDate!;
   }
 
-  tz.TZDateTime _nextInstance(DateTime selectedDateTime) {
-    final tz.TZDateTime scheduledDateTime = tz.TZDateTime(
+  tz.TZDateTime check() {
+    scheduledDate = tz.TZDateTime(
       tz.local,
-      selectedDateTime.year,
-      selectedDateTime.month,
-      selectedDateTime.day,
-      selectedDateTime.hour,
-      selectedDateTime.minute,
+      parsedDateTime!.year,
+      parsedDateTime!.month,
+      parsedDateTime!.day,
+      parsedDateTime!.hour,
+      parsedDateTime!.minute,
     );
-    if (scheduledDateTime.isBefore(tz.TZDateTime.now(tz.local))) {
-      return scheduledDateTime.add(const Duration(days: 0));
-    }
-    return scheduledDateTime;
-  }
-
- Future<void> _addTask() async {
-  try {
-    String dateString = _dateController.text;
-    String timeString = _timeController.text;
-
-    String dateTimeString = "$dateString $timeString";
-    DateTime parsedDateTime =
-        DateFormat("yyyy-MM-dd HH:mm").parse(dateTimeString);
-
-    // Convert parsedDateTime to TZDateTime
-    tz.TZDateTime scheduledDate =
-        tz.TZDateTime.from(parsedDateTime, tz.local);
 
     // Check if the scheduled date is in the future
-    if (scheduledDate.isBefore(tz.TZDateTime.now(tz.local))) {
+    if (scheduledDate!.isBefore(tz.TZDateTime.now(tz.local))) {
       print('Scheduled date must be in the future.');
-      return;
     }
 
-    Task task = Task(
-      id: null,
-      title: _titleController.text,
-      description: _descriptionController.text,
-      deadline: scheduledDate,
-    );
+    return scheduledDate!;
+  }
 
-    int result = await dbHelper.insertTask(task);
-    if (result != 0) {
-      // Schedule local notification using scheduledDate
-      int id = math.Random().nextInt(10000);
-      await scheduleLocalNotification(
-        id: id,
-        title: task.title,
-        body:
-            "${task.title} has ${DateFormat("yyyy-MM-dd HH:mm").format(scheduledDate)} deadline",
-        scheduledDate: scheduledDate,
-        payload: "",
+  Future<void> _addTask() async {
+    try {
+      String dateString = _dateController.text;
+      String timeString = _timeController.text;
+
+      String dateTimeString = "$dateString $timeString";
+      parsedDateTime = DateFormat("yyyy-MM-dd HH:mm").parse(dateTimeString);
+
+      // Convert parsedDateTime to TZDateTime
+      check();
+
+      Task task = Task(
+        id: null,
+        title: _titleController.text,
+        description: _descriptionController.text,
+        deadline: scheduledDate!,
       );
 
-      print("Scheduled ${scheduledDate.toLocal()}");
-      setState(() {});
-      _clearTextFields(); // Move this line here to clear the text fields after successful scheduling
-    } else {
-      print('Failed to insert task into the database.');
-    }
-  } catch (e) {
-    print('Error parsing DateTime: $e');
-  }
-}
+      int result = await dbHelper.insertTask(task);
+      if (result != 0) {
+        // Schedule local notification using scheduledDate
+        notificationServices.scheduledNotification(
+          title: task.title,
+          body:
+              "${task.title} has ${DateFormat("yyyy-MM-dd HH:mm").format(scheduledDate!)} deadline",
+          dateTime: scheduledDate!,
+        );
 
+        print("Scheduled ${scheduledDate!.toLocal()}");
+        setState(() {});
+        _clearTextFields(); // Move this line here to clear the text fields after successful scheduling
+      } else {
+        print('Failed to insert task into the database.');
+      }
+    } catch (e) {
+      print('Error parsing DateTime: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
