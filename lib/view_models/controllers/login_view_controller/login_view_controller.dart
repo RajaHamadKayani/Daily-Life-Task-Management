@@ -1,11 +1,12 @@
-import 'package:daily_life_tasks_management/views/home_view_1/home_view_1.dart';
+import 'package:daily_life_tasks_management/views/home_page/home_page.dart';
+import 'package:daily_life_tasks_management/views/home_screen/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginViewController extends GetxController {
-  dynamic userName;
+  static String ?userName;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -14,8 +15,8 @@ class LoginViewController extends GetxController {
   Future<void> loginUser(BuildContext context) async {
     try {
       final credential = await firebaseAuth.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
+        email: emailController.value.text,
+        password: passwordController.value.text,
       );
      
 
@@ -41,7 +42,9 @@ class LoginViewController extends GetxController {
       print('User Email: $userEmail');
       print('User Name: $userName');
       print('User Phone: $userPhone');
-       Get.to(HomeView1(
+       Get.to(HomeScreen(
+        email: userEmail,
+        name: userName,
       ));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

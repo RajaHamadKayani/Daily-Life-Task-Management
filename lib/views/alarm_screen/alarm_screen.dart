@@ -1,108 +1,129 @@
-// import 'dart:html';
+import 'dart:async';
 
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:flutter/material.dart';
-// import 'package:daily_life_tasks_management/main.dart';
-// import 'package:battery_plus/battery_plus.dart';
-// class BatteryAlarm extends StatefulWidget {
-//   @override
-//   _BatteryAlarmState createState() => _BatteryAlarmState();
-// }
+import 'package:flutter/material.dart';
+import 'package:battery_plus/battery_plus.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+class AlarmScreen extends StatefulWidget {
+  @override
+  _AlarmScreenState createState() => _AlarmScreenState();
+}
 
-// class _BatteryAlarmState extends State<BatteryAlarm> {
-//   Battery _battery = Battery();
-//   bool _isPermissionGranted = false;
-//   FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-//       FlutterLocalNotificationsPlugin();
+class _AlarmScreenState extends State<AlarmScreen> {
+  final Battery _battery = Battery();
+  bool isCharging = false;
+  bool isPlayingRingtone = false;
+  int batteryLevel = 0;
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     _checkPermissionStatus();
-//     _initializeNotifications();
-//   }
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedBatteryState();
+    _checkBatteryStatus();
+    Timer.periodic(Duration(seconds: 3), (timer) {
+      _checkBatteryLevel();
+    });
+  }
+  void _checkBatteryStatus() {
+    _battery.batteryState.then((batteryState) {
+      setState(() {
+        isCharging = batteryState == BatteryState.charging ||
+            batteryState == BatteryState.full;
+      });
+      if (isCharging && batteryLevel == 100 && !isPlayingRingtone) {
+        _startRingtone();
+      } else if (!isCharging) {
+        _stopRingtone();
+      }
+    });
+  }
 
-//   Future<void> _checkPermissionStatus() async {
-//     final status = await Permission.notification.status;
-//     setState(() {
-//       _isPermissionGranted = status == PermissionStatus.granted;
-//     });
-//   }
+  void _checkBatteryLevel() {
+    _battery.batteryLevel.then((level) {
+      setState(() {
+        batteryLevel = level;
+        isCharging = level == 100;
+      });
 
-//   Future<void> _requestPermission() async {
-//     final status = await Permission.notification.request();
-//     setState(() {
-//       _isPermissionGranted = status == PermissionStatus.granted;
-//     });
-//   }
+      _checkBatteryStatus();
+    });
+  }
 
-//   void _initializeNotifications() {
-//     const AndroidInitializationSettings initializationSettingsAndroid =
-//         AndroidInitializationSettings('@mipmap/ic_launcher');
-//     final InitializationSettings initializationSettings =
-//         InitializationSettings(android: initializationSettingsAndroid);
-//     _flutterLocalNotificationsPlugin.initialize(initializationSettings);
-//   }
+  void _startRingtone() {
+    FlutterRingtonePlayer.play(
+      android: AndroidSounds.alarm,
+      ios: IosSounds.glass,
+      looping: true,
+      volume: 0.5,
+    );
 
-//   void _startBatteryListener() {
-//     _battery.onBatteryStateChanged.listen((BatteryState state) {
-//       if (state == BatteryState.full && _isPermissionGranted) {
-//         // Battery is fully charged, generate alarm here
-//         _generateAlarm();
-//       }
-//     });
-//   }
+    setState(() {
+      isPlayingRingtone = true;
+    });
+  }
 
-//   void _generateAlarm() async {
-//     // Display a notification with sound
-//     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-//         AndroidNotificationDetails(
-//       'battery_channel',
-//       'Battery Channel',
-//       sound: RawResourceAndroidNotificationSound('notification_sound'),
-//     );
-//     const NotificationDetails platformChannelSpecifics =
-//         NotificationDetails(android: androidPlatformChannelSpecifics);
+  void _stopRingtone() {
+    FlutterRingtonePlayer.stop();
+    setState(() {
+      isPlayingRingtone = false;
+    });
+  }
+ void _loadSavedBatteryState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      batteryLevel = prefs.getInt('batteryLevel') ?? 0;
+      isCharging = prefs.getBool('isCharging') ?? false;
+    });
+  }
 
-//     await _flutterLocalNotificationsPlugin.show(
-//       0,
-//       'Battery Alarm',
-//       'Battery is fully charged!',
-//       platformChannelSpecifics,
-//     );
-//   }
+  void _saveBatteryState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('batteryLevel', batteryLevel);
+    prefs.setBool('isCharging', isCharging);
+  }
+  @override
+  void dispose() {
+    _stopRingtone();
+    super.dispose();
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Battery Alarm'),
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             Text(
-//               'Battery Alarm',
-//               style: TextStyle(fontSize: 20),
-//             ),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               onPressed: () {
-//                 _requestPermission();
-//               },
-//               child: Text('Request Permission'),
-//             ),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               onPressed: () {
-//                 _startBatteryListener();
-//               },
-//               child: Text('Start Battery Listener'),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Battery Monitor'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/images/battery_icon.png',
+              height: 100,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Battery Level: $batteryLevel%',
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 20),
+            Text(
+              isCharging ? 'Charging' : 'Not Charging',
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 20),
+            isCharging
+                ? Container(
+                    width: 50,
+                    height: 50,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                    ),
+                  )
+                : Container(),
+          ],
+        ),
+      ),
+    );
+  }
+}

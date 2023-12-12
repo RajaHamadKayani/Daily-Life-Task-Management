@@ -1,6 +1,6 @@
 import 'package:daily_life_tasks_management/utils/app_style/app_styles.dart';
 import 'package:daily_life_tasks_management/view_models/controllers/sign_up_controller/sign_up_controller.dart';
-import 'package:daily_life_tasks_management/views/home_view_1/home_view_1.dart';
+import 'package:daily_life_tasks_management/views/home_screen/home_screen.dart';
 import 'package:daily_life_tasks_management/views/widgets/container_widget/container_widget.dart';
 import 'package:daily_life_tasks_management/views/widgets/text_field_widget/text_field_widget.dart';
 import 'package:daily_life_tasks_management/views/widgets/text_widget/text_widget.dart';
@@ -44,7 +44,6 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               TextFieldWidget(
                 controller: signUpController.emailController,
-                controllerStyle: AppStyles.headlineMediumBlack,
                 hintText: "Enter email",
                 height: 50,
                 width: double.infinity,
@@ -57,7 +56,6 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               TextFieldWidget(
                 controller: signUpController.passwordController,
-                controllerStyle: AppStyles.headlineMediumBlack,
                 hintText: "Enter password",
                 height: 50,
                 width: double.infinity,
@@ -70,7 +68,6 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               TextFieldWidget(
                 controller: signUpController.confirmPasswordController,
-                controllerStyle: AppStyles.headlineMediumBlack,
                 hintText: "Confirm Password",
                 height: 50,
                 width: double.infinity,
@@ -83,7 +80,6 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               TextFieldWidget(
                 controller: signUpController.nameController,
-                controllerStyle: AppStyles.headlineMediumBlack,
                 hintText: "Enter your name",
                 height: 50,
                 width: double.infinity,
@@ -96,7 +92,6 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               TextFieldWidget(
                 controller: signUpController.phoneController,
-                controllerStyle: AppStyles.headlineMediumBlack,
                 hintText: "Enter your phone",
                 height: 50,
                 width: double.infinity,
@@ -132,7 +127,7 @@ class _SignUpViewState extends State<SignUpView> {
                     ),
                     GestureDetector(
                         onTap: () {
-                          Get.to( HomeView1());
+                          Get.to(  HomeScreen());
                         },
                         child: TextWidget(
                           text: "Already have an account? Sign In",

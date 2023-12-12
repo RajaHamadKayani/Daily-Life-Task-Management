@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
+// ignore: unused_import
 import 'package:google_fonts/google_fonts.dart';
 
 // ignore: must_be_immutable
 class AddTaskFieldWidget extends StatelessWidget {
   String? title;
   double? containerWidth;
-  dynamic controller;
+  TextEditingController? controller;  // Change to TextEditingController
   String? hintTextl;
-  dynamic suffixIcon;
+  Widget? suffixWidget;
   Function()? ontap;
-  AddTaskFieldWidget(
-      {super.key,
-      this.title,
-      this.containerWidth,
-      required this.controller,
-      this.hintTextl,
-      this.suffixIcon,
-      this.ontap});
+
+  AddTaskFieldWidget({
+    Key? key,
+    this.title,
+    this.containerWidth,
+    required this.controller,
+    this.hintTextl,
+    this.suffixWidget,
+    this.ontap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +29,11 @@ class AddTaskFieldWidget extends StatelessWidget {
       children: [
         Text(
           title ?? "",
-          style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            fontSize: 20,
+          ),
         ),
         const SizedBox(
           height: 10,
@@ -42,24 +48,23 @@ class AddTaskFieldWidget extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(top: 5, left: 10),
             child: TextFormField(
-              controller: controller,
-              style: GoogleFonts.montserrat(
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
-                  fontSize: 16),
+              readOnly: suffixWidget == null ? false : true,
+              controller: controller,  // Use the provided controller
+              style: const TextStyle(
+                fontWeight: FontWeight.w400,
+                color: Colors.black,
+                fontSize: 16,
+              ),
               decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: hintTextl ?? "",
-                  hintStyle: GoogleFonts.montserrat(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16),
-                  suffixIcon: GestureDetector(
-                      onTap: ontap,
-                      child: Icon(
-                        suffixIcon ?? null,
-                        color: Colors.grey,
-                      ))),
+                border: InputBorder.none,
+                hintText: hintTextl ?? "",
+                hintStyle: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w300,
+                  fontSize: 16,
+                ),
+                suffixIcon: suffixWidget,
+              ),
             ),
           ),
         )

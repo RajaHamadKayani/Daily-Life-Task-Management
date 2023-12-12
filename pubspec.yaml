@@ -2,7 +2,7 @@ name: daily_life_tasks_management
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.1.5 <4.0.0'
+  sdk: ">=3.1.5 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,8 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -40,6 +38,7 @@ dependencies:
   http: ^1.1.0
   firebase_database: ^10.3.4
   firebase_auth: ^4.13.0
+  date_picker_timeline: ^1.2.5
   firebase_core: ^2.22.0
   sqflite: ^2.3.0
   firebase_messaging: ^14.7.4
@@ -49,9 +48,18 @@ dependencies:
   timezone: ^0.9.2
   cron: ^0.5.1
   awesome_notifications: ^0.8.2
+  flutter_staggered_animations: ^1.1.1
+  flutter_timezone: ^1.0.8
+  google_maps_flutter: ^2.5.0
+  location: ^5.0.3
+  cloud_firestore: ^4.13.3
+  permission_handler: ^11.1.0
+  battery_plus: ^5.0.1
+  flutter_ringtone_player: ^3.2.0
+  shared_preferences: ^2.2.2
+  android_alarm_manager_plus: ^3.0.4
   # battery_plus: ^2.3.0
   # permission_handler: ^11.0.1
-  
 
 dev_dependencies:
   flutter_test:
@@ -69,7 +77,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

@@ -1,44 +1,59 @@
-import 'package:daily_life_tasks_management/view_models/app_themes/appthemes.dart';
-import 'package:daily_life_tasks_management/views/add_task/add_task.dart';
-import 'package:daily_life_tasks_management/views/home_view/home_view.dart';
-import 'package:daily_life_tasks_management/views/home_view_1/home_view_1.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:daily_life_tasks_management/db/DbHelper/dbHelper.dart';
+import 'package:daily_life_tasks_management/views/alarm_screen/alarm_screen.dart';
+import 'package:daily_life_tasks_management/views/google_map_permission/google_map_permission.dart';
+import 'package:daily_life_tasks_management/views/login_view/login_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get_navigation/get_navigation.dart';
-import 'package:timezone/data/latest_10y.dart';
+import 'package:get/get.dart';
+import 'package:timezone/data/latest.dart' as tz;
+
+import 'views/home_page/home_page.dart';
+import 'views/home_screen/home_screen.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-
-void main(context) async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  initializeTimeZones();
-  // NotificationServices1().initializeSettings();
   await Firebase.initializeApp();
-  // FirebaseMessaging.onBackgroundMessage(firebaseMessageBackgroundHandler);
+  tz.initializeTimeZones();
+  DbHelper.initDb();
+    await AndroidAlarmManager.initialize();
 
-  runApp(const MyApp());
+
+  runApp(MyApp());
 }
-
-// Future<void> firebaseMessageBackgroundHandler(RemoteMessage message) async {
-//   await Firebase.initializeApp();
-//   print(message.notification!.title.toString());
-// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: AppThemes.lightTheme,
-      darkTheme: AppThemes.darkTheme,
-      themeMode: ThemeMode.light,
-      home: const AddTask(),
+      theme: ThemeData(
+        // This is the theme of your application.
+        //
+        // TRY THIS: Try running your application with "flutter run". You'll see
+        // the application has a blue toolbar. Then, without quitting the app,
+        // try changing the seedColor in the colorScheme below to Colors.green
+        // and then invoke "hot reload" (save your changes or press the "hot
+        // reload" button in a Flutter-supported IDE, or press "r" if you used
+        // the command line to start the app).
+        //
+        // Notice that the counter didn't reset back to zero; the application
+        // state is not lost during the reload. To reset the state, use hot
+        // restart instead.
+        //
+        // This works for code too, not just values: Most code changes can be
+        // tested with just a hot reload.
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home:  HomePage(),
     );
   }
 }

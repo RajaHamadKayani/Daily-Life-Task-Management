@@ -28,7 +28,7 @@ class AppStyles {
   static final headlineMediumBlack = GoogleFonts.rubik(
       fontSize: 21,
       fontWeight: FontWeight.w600,
-      color: const Color(0xff4A4A4A));
+      color: const Color(0xff000000));
   static final smallHeadlineMediumBlack = GoogleFonts.rubik(
       fontSize: 14,
       fontWeight: FontWeight.w600,
