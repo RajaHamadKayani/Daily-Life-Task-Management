@@ -1,15 +1,20 @@
 import 'dart:async';
 
+import 'package:daily_life_tasks_management/views/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:battery_plus/battery_plus.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class AlarmScreen extends StatefulWidget {
   @override
   _AlarmScreenState createState() => _AlarmScreenState();
 }
 
-class _AlarmScreenState extends State<AlarmScreen> {
+class _AlarmScreenState extends State<AlarmScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController animationControllerp;
   final Battery _battery = Battery();
   bool isCharging = false;
   bool isPlayingRingtone = false;
@@ -18,12 +23,14 @@ class _AlarmScreenState extends State<AlarmScreen> {
   @override
   void initState() {
     super.initState();
+    animationControllerp = AnimationController(vsync: this);
     _loadSavedBatteryState();
     _checkBatteryStatus();
     Timer.periodic(Duration(seconds: 3), (timer) {
       _checkBatteryLevel();
     });
   }
+
   void _checkBatteryStatus() {
     _battery.batteryState.then((batteryState) {
       setState(() {
@@ -68,7 +75,8 @@ class _AlarmScreenState extends State<AlarmScreen> {
       isPlayingRingtone = false;
     });
   }
- void _loadSavedBatteryState() async {
+
+  void _loadSavedBatteryState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       batteryLevel = prefs.getInt('batteryLevel') ?? 0;
@@ -81,6 +89,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
     prefs.setInt('batteryLevel', batteryLevel);
     prefs.setBool('isCharging', isCharging);
   }
+
   @override
   void dispose() {
     _stopRingtone();
@@ -95,32 +104,54 @@ class _AlarmScreenState extends State<AlarmScreen> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              'assets/images/battery_icon.png',
-              height: 100,
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Battery Level: $batteryLevel%',
-              style: TextStyle(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              isCharging ? 'Charging' : 'Not Charging',
-              style: TextStyle(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            isCharging
-                ? Container(
-                    width: 50,
-                    height: 50,
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-                    ),
-                  )
-                : Container(),
+            IconButton(
+                onPressed: () {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => Dashboard()));
+                },
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.black,
+                )),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Lottie.asset("assets/json/charging_on.json",
+                    height: 200,
+                    width: 300,
+                    fit: BoxFit.cover,
+                    repeat: true,
+                    controller: animationControllerp, onLoaded: (composite) {
+                  animationControllerp.duration = composite.duration;
+                  animationControllerp.repeat();
+                }),
+                const SizedBox(height: 120),
+                Text(
+                  'Battery Level: $batteryLevel%',
+                  style: TextStyle(fontSize: 20),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  isCharging ? 'Charging' : 'Not Charging',
+                  style: TextStyle(fontSize: 20),
+                ),
+                const SizedBox(height: 20),
+                isCharging
+                    ? const SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: const CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.green),
+                        ),
+                      )
+                    : Container(),
+              ],
+            )
           ],
         ),
       ),

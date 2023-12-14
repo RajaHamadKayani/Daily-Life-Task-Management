@@ -27,8 +27,10 @@ class SignUpController extends GetxController {
         "email": emailController.value.text,
         "password": passwordController.value.text
       });
-      Get.to(const LoginView());
-      Get.snackbar("Sign Up", "User registered successfully");
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const LoginView()));
+      Get.snackbar("Sign Up", "User registered successfully",
+          backgroundColor: Colors.teal, colorText: Colors.white);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');

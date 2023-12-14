@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:daily_life_tasks_management/views/dashboard/dashboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../view_models/notifcation_services_1/notification_services_1.dart';
 import '../details_page/details_page.dart';
@@ -24,7 +26,15 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController animationController;
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(vsync: this);
+  }
+
   NotificationServices2 notificationServices2 = NotificationServices2();
 
   final int maxTitleLength = 60;
@@ -81,104 +91,114 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-            icon: const Icon(
-              Icons.menu,
-              color: Colors.black,
-            )),
-      ),
-      drawer: MyNavigationDrawer(
-        title: widget.name,
-        email: widget.email,
-      ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Header(),
-                    TextField(
-                      controller: _textEditingController,
-                      maxLength: maxTitleLength,
-                      decoration: InputDecoration(
-                        counterText: "",
-                        suffix: Container(
-                          padding: EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.0),
-                            color: Colors.grey[200],
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 50.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => Dashboard()));
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                    )),
+                Lottie.asset("assets/json/task_list.json",
+                    controller: animationController,
+                    repeat: true, onLoaded: (composite) {
+                  animationController.duration = composite.duration;
+                  animationController.repeat();
+                }),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Header(),
+                          TextField(
+                            controller: _textEditingController,
+                            maxLength: maxTitleLength,
+                            decoration: InputDecoration(
+                              counterText: "",
+                              suffix: Container(
+                                padding: EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                  color: Colors.grey[200],
+                                ),
+                                child: Text((maxTitleLength -
+                                        _textEditingController.text.length)
+                                    .toString()),
+                              ),
+                            ),
                           ),
-                          child: Text((maxTitleLength -
-                                  _textEditingController.text.length)
-                              .toString()),
-                        ),
+                          SizedBox(height: 20.0),
+                          CupertinoSlidingSegmentedControl<int>(
+                            onValueChanged: (value) {
+                              if (value == 1) eventDate = null;
+                              setState(
+                                  () => segmentedControlGroupValue = value!);
+                            },
+                            groupValue: segmentedControlGroupValue,
+                            padding: const EdgeInsets.all(4.0),
+                            children: <int, Widget>{
+                              0: Text("One time"),
+                              1: Text("Daily"),
+                              2: Text("Weekly")
+                            },
+                          ),
+                          SizedBox(height: 24.0),
+                          Text("Date & Time"),
+                          SizedBox(height: 12.0),
+                          GestureDetector(
+                            onTap: selectEventDate,
+                            child: DateField(eventDate: eventDate),
+                          ),
+                          SizedBox(height: 12.0),
+                          GestureDetector(
+                            onTap: () async {
+                              eventTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay(
+                                  hour: currentTime.hour,
+                                  minute: currentTime.minute + 1,
+                                ),
+                              );
+                              setState(() {});
+                            },
+                            child: TimeField(eventTime: eventTime),
+                          ),
+                          SizedBox(height: 20.0),
+                          ActionButtons(
+                            onCreate: onCreate,
+                            onCancel: resetForm,
+                          ),
+                          SizedBox(height: 12.0),
+                          GestureDetector(
+                            onTap: () async {
+                              await cancelAllNotifications();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("All notfications cancelled"),
+                                ),
+                              );
+                            },
+                            child: _buildCancelAllButton(),
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(height: 20.0),
-                    CupertinoSlidingSegmentedControl<int>(
-                      onValueChanged: (value) {
-                        if (value == 1) eventDate = null;
-                        setState(() => segmentedControlGroupValue = value!);
-                      },
-                      groupValue: segmentedControlGroupValue,
-                      padding: const EdgeInsets.all(4.0),
-                      children: <int, Widget>{
-                        0: Text("One time"),
-                        1: Text("Daily"),
-                        2: Text("Weekly")
-                      },
-                    ),
-                    SizedBox(height: 24.0),
-                    Text("Date & Time"),
-                    SizedBox(height: 12.0),
-                    GestureDetector(
-                      onTap: selectEventDate,
-                      child: DateField(eventDate: eventDate),
-                    ),
-                    SizedBox(height: 12.0),
-                    GestureDetector(
-                      onTap: () async {
-                        eventTime = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay(
-                            hour: currentTime.hour,
-                            minute: currentTime.minute + 1,
-                          ),
-                        );
-                        setState(() {});
-                      },
-                      child: TimeField(eventTime: eventTime),
-                    ),
-                    SizedBox(height: 20.0),
-                    ActionButtons(
-                      onCreate: onCreate,
-                      onCancel: resetForm,
-                    ),
-                    SizedBox(height: 12.0),
-                    GestureDetector(
-                      onTap: () async {
-                        await cancelAllNotifications();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("All notfications cancelled"),
-                          ),
-                        );
-                      },
-                      child: _buildCancelAllButton(),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -192,7 +212,7 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(8.0),
         color: Colors.indigo[100],
       ),
-      padding:const EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: 24.0,
         vertical: 12.0,
       ),
@@ -244,11 +264,14 @@ class _HomePageState extends State<HomePage> {
       ).show(context);
     }
   }
+
   void scheduleNotificationsCheck() {
-  AndroidAlarmManager.periodic(const Duration(minutes: 15), 0, checkNotifications);
-}
-void checkNotifications() async {
-  // Check and show notifications if needed
-  // You can use your existing notification logic here
-}
+    AndroidAlarmManager.periodic(
+        const Duration(minutes: 15), 0, checkNotifications);
+  }
+
+  void checkNotifications() async {
+    // Check and show notifications if needed
+    // You can use your existing notification logic here
+  }
 }

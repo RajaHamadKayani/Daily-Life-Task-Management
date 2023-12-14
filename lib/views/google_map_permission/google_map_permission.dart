@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:daily_life_tasks_management/view_models/controllers/login_view_controller/login_view_controller.dart';
+import 'package:daily_life_tasks_management/views/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart' as loc;
 import 'package:permission_handler/permission_handler.dart';
@@ -35,6 +36,14 @@ class _GoogleMapPermissionState extends State<GoogleMapPermission> {
       ),
       body: Column(
         children: [
+           IconButton(
+                  onPressed: () {
+                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Dashboard()));
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  )),
           TextButton(
               onPressed: () {
                 _getLocation();

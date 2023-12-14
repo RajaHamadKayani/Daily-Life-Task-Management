@@ -1,8 +1,11 @@
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:daily_life_tasks_management/db/DbHelper/dbHelper.dart';
 import 'package:daily_life_tasks_management/views/alarm_screen/alarm_screen.dart';
-import 'package:daily_life_tasks_management/views/google_map_permission/google_map_permission.dart';
+import 'package:daily_life_tasks_management/views/dashboard/dashboard.dart';
 import 'package:daily_life_tasks_management/views/login_view/login_view.dart';
+
+import 'package:daily_life_tasks_management/views/sign_up_view/sign_up_view.dart';
+import 'package:daily_life_tasks_management/views/splash_view/splash_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -10,17 +13,16 @@ import 'package:get/get.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
 import 'views/home_page/home_page.dart';
-import 'views/home_screen/home_screen.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   tz.initializeTimeZones();
   DbHelper.initDb();
-    await AndroidAlarmManager.initialize();
-
+  await AndroidAlarmManager.initialize();
 
   runApp(MyApp());
 }
@@ -32,6 +34,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+     
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -49,11 +52,11 @@ class MyApp extends StatelessWidget {
         // restart instead.
         //
         // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
+        // tested with just ac hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:  HomePage(),
+      home: const SplashScreen(),
     );
   }
 }

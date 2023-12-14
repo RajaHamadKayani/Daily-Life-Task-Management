@@ -1,55 +1,64 @@
-import 'package:daily_life_tasks_management/utils/app_style/app_styles.dart';
 import 'package:daily_life_tasks_management/view_models/controllers/splash_view_controller/splash_view_controller.dart';
-import 'package:daily_life_tasks_management/views/widgets/asset_image_widget/asset_image_widget.dart';
-import 'package:daily_life_tasks_management/views/widgets/container_widget/container_widget.dart';
-import 'package:daily_life_tasks_management/views/widgets/text_widget/text_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
-class SplashView extends StatefulWidget {
-  const SplashView({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<SplashView> createState() => _SplashViewState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashViewState extends State<SplashView> {
-  SplashViewController splashViewController = Get.put(SplashViewController());
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  SplashViewController splashViewController = SplashViewController();
+  late AnimationController animationController;
   @override
   void initState() {
     super.initState();
     splashViewController.goToNext(context);
+    animationController = AnimationController(vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppStyles.whiteColor,
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 45),
-                child: ContainerWidget(
-                  height: 300,
-                  width: double.infinity,
-                  widget: 
-                  AssetImageWidget(
-                    assetImage: "assets/images/habit_logo.jpg",
-                    boxFit: BoxFit.contain,
-                    
-                  ),
-                ),
+    return Scaffold(
+      backgroundColor: Colors.teal,
+      body: SafeArea(
+          child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              "assets/json/splash_logo.json",
+              controller: animationController,
+              onLoaded: (composite) {
+                animationController.duration = composite.duration;
+                animationController.repeat;
+              },
+            ),
+            const SizedBox(height: 20),
+            RichText(
+                text: TextSpan(children: [
+              TextSpan(
+                text: "Daily Life ",
+                style: GoogleFonts.montserrat(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18),
               ),
-              const SizedBox(height: 50,),
-              TextWidget(text: "Daily Life Task Management",textStyle: AppStyles.headlineMediumBlack,)
-            ],
-          ),
+              TextSpan(
+                  text: "Task Monitoring",
+                  style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18))
+            ]))
+          ],
         ),
-      ),
+      )),
     );
   }
 }

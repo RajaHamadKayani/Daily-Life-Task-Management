@@ -27,8 +27,7 @@ class _MyNavigationDrawerState extends State<MyNavigationDrawer> {
       child: Column(
         children: [
           UserAccountsDrawerHeader(
-            
-            decoration: const BoxDecoration(color: Colors.blue),
+            decoration: const BoxDecoration(color: Colors.teal),
             accountName: Text(widget.title ?? ""),
             accountEmail: Text(widget.email ?? ""),
           ),
@@ -70,7 +69,7 @@ class _MyNavigationDrawerState extends State<MyNavigationDrawer> {
       case 0:
         Get.to(const GoogleMapPermission());
       case 1:
-        Get.to( AlarmScreen());
+        Get.to(AlarmScreen());
       case 2:
         Get.to(const AddTask());
     }
