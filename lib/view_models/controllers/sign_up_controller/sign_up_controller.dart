@@ -1,4 +1,3 @@
-import 'package:daily_life_tasks_management/views/login_view/login_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,6 +11,13 @@ class SignUpController extends GetxController {
   TextEditingController passwordController = TextEditingController();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
+  void clearTextFields() {
+    emailController.clear();
+    nameController.clear();
+    phoneController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
+  }
 
   registerUser(BuildContext context) async {
     try {
@@ -27,10 +33,7 @@ class SignUpController extends GetxController {
         "email": emailController.value.text,
         "password": passwordController.value.text
       });
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const LoginView()));
-      Get.snackbar("Sign Up", "User registered successfully",
-          backgroundColor: Colors.teal, colorText: Colors.white);
+      clearTextFields();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');

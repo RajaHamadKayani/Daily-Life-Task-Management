@@ -1,4 +1,6 @@
 import 'package:daily_life_tasks_management/views/dashboard/dashboard.dart';
+import 'package:daily_life_tasks_management/views/home_page/home_page.dart';
+import 'package:daily_life_tasks_management/views/login_view/login_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +14,6 @@ class LoginViewController extends GetxController {
   final databaseReference = FirebaseDatabase.instance.ref();
 
   Future<void> loginUser(BuildContext context) async {
-    // ignore: unused_local_variable
-    RxBool obsecure = false.obs;
-    void isObsecure(BuildContext context, bool value) {}
-
     try {
       final credential = await firebaseAuth.signInWithEmailAndPassword(
         email: emailController.value.text,
@@ -44,13 +42,9 @@ class LoginViewController extends GetxController {
       print('User Email: $userEmail');
       print('User Name: $userName');
       print('User Phone: $userPhone');
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Dashboard(
-                    name: userName,
-                    email: userEmail,
-                  )));
+
+      // Update this part to navigate to the appropriate screen
+
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
@@ -71,4 +65,6 @@ class LoginViewController extends GetxController {
       }
     }
   }
+
+
 }

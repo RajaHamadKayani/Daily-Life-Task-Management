@@ -1,6 +1,5 @@
 import 'package:daily_life_tasks_management/utils/app_style/app_styles.dart';
 import 'package:daily_life_tasks_management/view_models/controllers/sign_up_controller/sign_up_controller.dart';
-import 'package:daily_life_tasks_management/views/home_screen/home_screen.dart';
 import 'package:daily_life_tasks_management/views/login_view/login_view.dart';
 import 'package:daily_life_tasks_management/views/widgets/container_widget/container_widget.dart';
 import 'package:daily_life_tasks_management/views/widgets/text_field_widget/text_field_widget.dart';
@@ -21,6 +20,56 @@ class _SignUpViewState extends State<SignUpView> {
   void initState() {
     super.initState();
     signUpController = Get.put(SignUpController());
+  }
+
+  bool isValide(BuildContext context) {
+    if (signUpController.emailController.value.text.isEmpty) {
+      Get.snackbar("Register User", "Email Field can not be empty",
+          colorText: Colors.white,
+          backgroundColor: Colors.teal,
+          snackPosition: SnackPosition.BOTTOM);
+      return false;
+    } else if (signUpController.passwordController.value.text.isEmpty) {
+      Get.snackbar("Register User", "Password Field can not be empty",
+          colorText: Colors.white,
+          backgroundColor: Colors.teal,
+          snackPosition: SnackPosition.BOTTOM);
+      return false;
+    } else if (signUpController.confirmPasswordController.value.text.isEmpty) {
+      Get.snackbar("Register User", " confirm Password Field can not be empty",
+          colorText: Colors.white,
+          backgroundColor: Colors.teal,
+          snackPosition: SnackPosition.BOTTOM);
+      return false;
+    } else if (signUpController.nameController.value.text.isEmpty) {
+      Get.snackbar("Register User", "name Field can not be empty",
+          colorText: Colors.white,
+          backgroundColor: Colors.teal,
+          snackPosition: SnackPosition.BOTTOM);
+      return false;
+    } else if (signUpController.phoneController.value.text.isEmpty) {
+      Get.snackbar("Register User", "phone  Field can not be empty",
+          colorText: Colors.white,
+          backgroundColor: Colors.teal,
+          snackPosition: SnackPosition.BOTTOM);
+      return false;
+    } else if (signUpController.passwordController.value.text !=
+        signUpController.confirmPasswordController.value.text) {
+      Get.snackbar("Register User",
+          "Password Field and confirm Password field should be same",
+          colorText: Colors.white,
+          backgroundColor: Colors.teal,
+          snackPosition: SnackPosition.BOTTOM);
+      return false;
+    } else {
+      Get.snackbar("Register User", "User registered successfully",
+          colorText: Colors.white,
+          backgroundColor: Colors.teal,
+          snackPosition: SnackPosition.BOTTOM);
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const LoginView()));
+      return true;
+    }
   }
 
   @override
@@ -114,7 +163,8 @@ class _SignUpViewState extends State<SignUpView> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        signUpController.registerUser(context);
+                        if (!isValide(context))
+                          signUpController.registerUser(context);
                       },
                       child: ContainerWidget(
                         height: 50,
@@ -134,7 +184,10 @@ class _SignUpViewState extends State<SignUpView> {
                     ),
                     GestureDetector(
                         onTap: () {
-                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const LoginView()));
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LoginView()));
                         },
                         child: TextWidget(
                           text: "Already have an account? Sign In",

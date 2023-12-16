@@ -1,10 +1,6 @@
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:daily_life_tasks_management/db/DbHelper/dbHelper.dart';
-import 'package:daily_life_tasks_management/views/alarm_screen/alarm_screen.dart';
-import 'package:daily_life_tasks_management/views/dashboard/dashboard.dart';
-import 'package:daily_life_tasks_management/views/login_view/login_view.dart';
 
-import 'package:daily_life_tasks_management/views/sign_up_view/sign_up_view.dart';
 import 'package:daily_life_tasks_management/views/splash_view/splash_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +8,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
-import 'views/home_page/home_page.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();

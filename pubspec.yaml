@@ -49,6 +49,7 @@ dependencies:
   cron: ^0.5.1
   awesome_notifications: ^0.8.2
   flutter_staggered_animations: ^1.1.1
+  get_storage: ^2.1.1
   flutter_timezone: ^1.0.8
   google_maps_flutter: ^2.5.0
   location: ^5.0.3

@@ -1,5 +1,6 @@
 import 'package:daily_life_tasks_management/utils/app_style/app_styles.dart';
 import 'package:daily_life_tasks_management/view_models/controllers/login_view_controller/login_view_controller.dart';
+import 'package:daily_life_tasks_management/views/dashboard/dashboard.dart';
 import 'package:daily_life_tasks_management/views/sign_up_view/sign_up_view.dart';
 import 'package:daily_life_tasks_management/views/widgets/container_widget/container_widget.dart';
 import 'package:daily_life_tasks_management/views/widgets/text_field_widget/text_field_widget.dart';
@@ -20,29 +21,31 @@ class _LoginViewState extends State<LoginView>
   bool isValide(BuildContext context) {
     if (loginViewController.emailController.value.text.isEmpty) {
       Get.snackbar("Login User", "Email Field can not be empty",
-          colorText: Colors.white, backgroundColor: Colors.teal,
+          colorText: Colors.white,
+          backgroundColor: Colors.teal,
           snackPosition: SnackPosition.BOTTOM);
       return false;
     } else if (loginViewController.passwordController.value.text.isEmpty) {
       Get.snackbar("Login User", "Password Field can not be empty",
-          colorText: Colors.white, backgroundColor: Colors.teal,
+          colorText: Colors.white,
+          backgroundColor: Colors.teal,
           snackPosition: SnackPosition.BOTTOM);
       return false;
     } else {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Dashboard()));
       return true;
     }
   }
 
   late AnimationController animationController;
   late LoginViewController loginViewController = Get.put(LoginViewController());
-   
+
   @override
   void initState() {
     super.initState();
 
     animationController = AnimationController(vsync: this);
-      
-
   }
 
   @override
@@ -87,7 +90,7 @@ class _LoginViewState extends State<LoginView>
                     height: 30,
                   ),
                   TextFieldWidget(
-                    controller:loginViewController.emailController,
+                    controller: loginViewController.emailController,
                     hintText: "Enter email",
                     height: 50,
                     width: double.infinity,
@@ -99,7 +102,7 @@ class _LoginViewState extends State<LoginView>
                     height: 20,
                   ),
                   TextFieldWidget(
-                    controller:loginViewController. passwordController,
+                    controller: loginViewController.passwordController,
                     hintText: "Enter password",
                     height: 50,
                     width: double.infinity,
@@ -138,8 +141,10 @@ class _LoginViewState extends State<LoginView>
                         ),
                         GestureDetector(
                           onTap: () {
-                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const SignUpView()));
-
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const SignUpView()));
                           },
                           child: TextWidget(
                             text: "Not Registered yet? Sign Up",
