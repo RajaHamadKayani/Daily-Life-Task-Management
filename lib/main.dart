@@ -8,18 +8,37 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
+import 'services/handle_background_alarm/handle_background_alarm.dart';
+
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+BackgroundTasks backgroundTasks = BackgroundTasks();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   tz.initializeTimeZones();
+  await initNotifications();
+  backgroundTasks.initializeBackgroundTasks();
+
   DbHelper.initDb();
   await AndroidAlarmManager.initialize();
 
   runApp(MyApp());
+}
+
+Future<void> initNotifications() async {
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('icon_1');
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await FlutterLocalNotificationsPlugin().initialize(
+    initializationSettings,
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -29,7 +48,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-     
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(

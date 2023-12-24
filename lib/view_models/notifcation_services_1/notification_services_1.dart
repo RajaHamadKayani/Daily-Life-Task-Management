@@ -6,7 +6,6 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../../views/details_page/details_page.dart';
 
-
 class NotificationServices2 {
   // Singleton pattern
   static final NotificationServices2 _NotificationServices2 =
@@ -43,7 +42,8 @@ class NotificationServices2 {
 
   Future<void> init() async {
     final AndroidInitializationSettings androidInitializationSettings =
-        AndroidInitializationSettings("task_image");
+    AndroidInitializationSettings("icon_1");
+
 
     final DarwinInitializationSettings iOSInitializationSettings =
         DarwinInitializationSettings(
@@ -61,15 +61,12 @@ class NotificationServices2 {
     // *** Initialize timezone here ***
     tz.initializeTimeZones();
 
-    await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      
-        onDidReceiveNotificationResponse: ((response) async{
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onDidReceiveNotificationResponse: ((response) async {
       String? result = response.payload;
-       await Get.to(DetailsPage(payload: response.payload));
+      await Get.to(DetailsPage(payload: response.payload));
       print(result);
-    })
-    );
+    }));
   }
 
   Future<void> requestIOSPermissions() async {

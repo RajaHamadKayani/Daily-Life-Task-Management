@@ -5,6 +5,7 @@ import 'package:daily_life_tasks_management/view_models/controllers/login_view_c
 import 'package:daily_life_tasks_management/views/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart' as loc;
+import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../my_map/my_map.dart';
@@ -16,13 +17,16 @@ class GoogleMapPermission extends StatefulWidget {
   State<GoogleMapPermission> createState() => _GoogleMapPermissionState();
 }
 
-class _GoogleMapPermissionState extends State<GoogleMapPermission> {
+class _GoogleMapPermissionState extends State<GoogleMapPermission>
+    with SingleTickerProviderStateMixin {
+  late AnimationController animationController;
   final loc.Location location = loc.Location();
   StreamSubscription<loc.LocationData>? _locationSubscription;
 
   @override
   void initState() {
     super.initState();
+    animationController = AnimationController(vsync: this);
     _requestPermission();
     // location.changeSettings(interval: 300, accuracy: loc.LocationAccuracy.high);
     // location.enableBackgroundMode(enable: true);
@@ -36,14 +40,28 @@ class _GoogleMapPermissionState extends State<GoogleMapPermission> {
       ),
       body: Column(
         children: [
-           IconButton(
-                  onPressed: () {
-                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Dashboard()));
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                  )),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: SizedBox(
+              height: 250,
+              width: double.infinity,
+              child: Lottie.asset("assets/json/permission_screen_logo.json",
+                  fit: BoxFit.cover ,
+                  repeat: true,
+                  reverse: false, onLoaded: (composite) {
+                animationController.duration = composite.duration;
+              }),
+            ),
+          ),
+          IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => Dashboard()));
+              },
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              )),
           TextButton(
               onPressed: () {
                 _getLocation();

@@ -1,3 +1,4 @@
+import 'package:daily_life_tasks_management/views/add_prioritize_tasks/add_prioritize_tasks.dart';
 import 'package:daily_life_tasks_management/views/alarm_screen/alarm_screen.dart';
 import 'package:daily_life_tasks_management/views/google_map_permission/google_map_permission.dart';
 import 'package:daily_life_tasks_management/views/home_page/home_page.dart';
@@ -28,11 +29,13 @@ class _DashboardState extends State<Dashboard>
     animationController = AnimationController(vsync: this);
   }
 
-  List<String> text = ["Add Tasks", "Live Location", "Alarm Generator"];
+  List<String> text = ["Add Tasks", "Live Location", "Alarm Generator","Prioritize tasks"];
   List<String> animations = [
     "assets/json/add_task.json",
     "assets/json/live_location.json",
-    "assets/json/charging.json"
+    "assets/json/charging.json",
+        "assets/json/add_task.json",
+
   ];
 
   navToRoute(BuildContext context, int index) {
@@ -47,6 +50,10 @@ class _DashboardState extends State<Dashboard>
       case 2:
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => AlarmScreen()));
+        break;
+          case 3:
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => AddTaskScreen()));
         break;
       default:
         Container();

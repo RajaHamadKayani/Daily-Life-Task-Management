@@ -1,16 +1,16 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:daily_life_tasks_management/views/dashboard/dashboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../view_models/notifcation_services_1/notification_services_1.dart';
-import '../details_page/details_page.dart';
-import '../navigation_drawer/navigation_drawer.dart';
 import '../widgets/action_buttons.dart';
 import '../widgets/custom_day_picker.dart';
 import '../widgets/date_field.dart';
@@ -50,32 +50,46 @@ class _HomePageState extends State<HomePage>
   TimeOfDay? eventTime;
 
   Future<void> onCreate() async {
-    await notificationServices2.showNotification(
-      0,
-      _textEditingController.text,
-      "A new event has been created.",
-      jsonEncode({
-        "title": _textEditingController.text,
-        "eventDate": DateFormat("EEEE, d MMM y").format(eventDate!),
-        "eventTime": eventTime!.format(context),
-      }),
-    );
+    try {
+      int randomId = generateRandomId();
 
-    await notificationServices2.scheduleNotification(
-      1,
-      _textEditingController.text,
-      "Reminder for your scheduled event at ${eventTime!.format(context)}",
-      eventDate!,
-      eventTime!,
-      jsonEncode({
-        "title": _textEditingController.text,
-        "eventDate": DateFormat("EEEE, d MMM y").format(eventDate!),
-        "eventTime": eventTime!.format(context),
-      }),
-      getDateTimeComponents(),
-    );
+      if (eventTime == null) {
+        // Handle the case where eventTime is null, for example, show an error message
+        print("Event time is null. Please select a time.");
+        return;
+      }
 
-    resetForm();
+      await notificationServices2.scheduleNotification(
+        randomId,
+        _textEditingController.text,
+        "Reminder for your scheduled event at ${eventTime!.format(context)}",
+        eventDate!,
+        eventTime!,
+        jsonEncode({
+          "title": _textEditingController.text,
+          "eventDate": DateFormat("EEEE, d MMM y").format(eventDate!),
+          "eventTime": eventTime!.format(context),
+        }),
+        getDateTimeComponents(),
+      );
+
+      resetForm();
+    } catch (e) {
+      print("Error while sceduling fucking notifications :${e.toString()}");
+      Get.snackbar("Schedule Notification", e.toString(),
+          backgroundColor: Colors.teal,
+          colorText: Colors.white,
+          duration: Duration(seconds: 6));
+    }
+  }
+
+  int generateRandomId() {
+    // Use the current time in milliseconds as the seed for the random number generator
+    int seed = DateTime.now().millisecondsSinceEpoch;
+    Random random = Random(seed);
+
+    // Generate a random number between 1 and 1000000
+    return random.nextInt(1000000) + 1;
   }
 
   Future<void> cancelAllNotifications() async {
@@ -165,14 +179,20 @@ class _HomePageState extends State<HomePage>
                           SizedBox(height: 12.0),
                           GestureDetector(
                             onTap: () async {
-                              eventTime = await showTimePicker(
+                              TimeOfDay? selectedTime = await showTimePicker(
                                 context: context,
                                 initialTime: TimeOfDay(
                                   hour: currentTime.hour,
                                   minute: currentTime.minute + 1,
                                 ),
                               );
-                              setState(() {});
+                              if (selectedTime != null) {
+                                setState(() {
+                                  eventTime = selectedTime;
+                                });
+                              } else {
+                                print("Event time selection canceled");
+                              }
                             },
                             child: TimeField(eventTime: eventTime),
                           ),
